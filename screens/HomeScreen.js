@@ -4,37 +4,41 @@ import {
   StyleSheet,
   Text,
   View,
-  Dimensions
+  Dimensions,
+  ListView,
+  TouchableOpacity,
+  Linking
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import Title from '../components/Title'
-import axios from 'axios'
 export default class HomeScreen extends React.Component {
   constructor(){
     super()
     this.state = {
-      stories: ''
+      stories: '' 
     }
+  }
+  goToLink(link){
+
   }
    componentWillMount(){ 
      let self = this;
      fetch('https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty')
-      .then((responseJson) => {
-        return ((JSON.parse(responseJson._bodyInit)).slice(0,10))
+      .then((response) => {
+        return ((JSON.parse(response._bodyInit)).slice(0,10))
       })
       .then( async function(stories) {
         let myStories = [];
         for(var i = 0; i < stories.length; i++) {
           await fetch(`https://hacker-news.firebaseio.com/v0/item/${stories[i]}.json?print=pretty`)
           .then(async (response) => {
-            await myStories.push((response._bodyInit))
+            await myStories.push((JSON.parse(response._bodyInit)))
           })
         }
-          console.log('myStories', myStories)
+        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         self.setState({
-          stories: myStories
+          stories: ds.cloneWithRows(myStories)
         })  
-        console.log(self.state)
       })
       .catch((error) => {
         console.error(error);
@@ -42,7 +46,6 @@ export default class HomeScreen extends React.Component {
   }
   render() {
     if(this.state.stories !== ''){  
-      console.log('stories', this.state.stories)
       return (
         <View style={styles.container}>
           <Title/>
@@ -50,10 +53,27 @@ export default class HomeScreen extends React.Component {
             <View>
               <Text style={styles.screenHeader}>Top Stories</Text>
             </View>
-            <View>
-              <Text>
-                {this.state.stories}
-              </Text>
+            <View style={styles.news}>
+              <ListView 
+                dataSource={this.state.stories}
+                renderRow={(rowData, sectionId, rowId) => (
+                  <View style={styles.newsRow}>
+                    <View style={styles.linkRow}>
+                      <Text >
+                        {Number(rowId) + 1}. Title:{` `}
+                      </Text>
+                      <TouchableOpacity 
+                        onPress={function(){Linking.openURL(rowData.url).catch(err => console.error('An error occurred', err))}}
+                        >
+                        <Text style={styles.link}>
+                          {rowData.title}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    <Text>{`    `}Author: {rowData.by}{`  `} Score: {rowData.score}</Text>
+                  </View>
+                )}
+                />   
             </View>
           </View>
         </View>
@@ -81,6 +101,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 10,
+    alignItems: 'center'
   },
   story: {
     width: width,
@@ -88,5 +109,19 @@ const styles = StyleSheet.create({
   },
   screenHeader: {
     fontSize: 20
+  },
+  linkRow: {
+    flexDirection: 'row'
+  },
+  news: {
+    marginTop: 10,
+    width: width * .9
+  },
+  newsRow: {
+    marginTop: 10
+  },
+  link: {
+    color: 'blue',
+    textDecorationLine : 'underline'
   }
 });

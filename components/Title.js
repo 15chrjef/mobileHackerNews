@@ -12,7 +12,7 @@ export default class Title extends React.Component {
   render() {
     return (
       <View style={styles.title}>
-        <Text style={styles.titleText}>Tab Example App</Text>
+        <Text style={styles.titleText}>Hacker News App</Text>
       </View>
     )
   }
