@@ -12,7 +12,7 @@ import {
 const {height, width} = Dimensions.get('window');
 import Title from '../components/Title.js'
 
-export default class AboutScreen extends React.Component {
+export default class JobScreen extends React.Component {
    constructor(){
     super()
     this.state = {
@@ -54,20 +54,22 @@ export default class AboutScreen extends React.Component {
             <View>
               <Text style={styles.screenHeader}>Job Stories</Text>
             </View>
-            <View>
+            <View style={styles.news}>
               <ListView 
                 dataSource={this.state.stories}
                 renderRow={(rowData, sectionId, rowId) => (
-                  <View>
-                    <Text>{Number(rowId) + 1}. Title: {rowData.title}</Text>
-                    <Text>{`      `}Author: {rowData.by} Score: {rowData.score}</Text>
-                    <TouchableOpacity 
-                      onPress={function(){Linking.openURL(rowData.url).catch(err => console.error('An error occurred', err))}}
-                      >
-                      <Text style={styles.link}>
-                        {`      `}{rowData.url}
-                      </Text>
-                    </TouchableOpacity>
+                  <View style={styles.newsRow}>
+                    <View style={styles.linkRow}>
+                      <Text>{Number(rowId) + 1}. Title: </Text>
+                      <TouchableOpacity 
+                        onPress={function(){Linking.openURL(rowData.url).catch(err => console.error('An error occurred', err))}}
+                        >
+                        <Text style={styles.link}>
+                           {rowData.title}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                      <Text>{`    `}Author: {rowData.by} Score: {rowData.score}</Text>
                   </View>
                 )}
                 />   
@@ -106,6 +108,16 @@ const styles = StyleSheet.create({
   },
   screenHeader: {
     fontSize: 20
+  },
+  linkRow: {
+    flexDirection: 'row'
+  },
+  news: {
+    marginTop: 10,
+    width: width * .9
+  },
+  newsRow: {
+    marginTop: 10
   },
   link: {
     color: 'blue',
