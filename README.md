@@ -1,2 +1,2 @@
-# tabNavigationExample
-A informal template for building apps with React Native and Exponent's tab navigation.
+# HackerNewsMobileApp
+A mobile app that allows users to access many of the best news sources on HackerNews.
