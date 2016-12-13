@@ -49,7 +49,9 @@ export default class AskScreen extends React.Component {
 					<View style={styles.body}>
 						<Text style={styles.screenHeader}>Ask Stories</Text>
 						<ListView
+							contentInset={{bottom:30}}
 							dataSource={this.state.stories}
+							renderFooter={() => <View style={styles.footer}></View>}
 							renderRow={(rowData, sectionId, rowId) => (
 								<View style={styles.newsRow}>
 									<View style={styles.linkRow}>
@@ -95,7 +97,8 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   linkRow: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+		width: width * .8
   },
 	title: {
 		fontWeight: 'bold'
@@ -107,5 +110,8 @@ const styles = StyleSheet.create({
   link: {
     color: 'blue',
     textDecorationLine : 'underline'
-  }
+  },
+	footer: {
+		paddingBottom: 30
+	}
 });

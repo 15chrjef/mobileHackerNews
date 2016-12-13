@@ -12,6 +12,7 @@ export default class Title extends React.Component {
   render() {
     return (
       <View style={styles.title}>
+        <View style={styles.statusPadding}></View>
         <Text style={styles.titleText}>Hacker News App</Text>
       </View>
     )
@@ -27,7 +28,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FF5722',
-    flex: 1,
+    flex: 1.2,
     width: width 
   },
+  statusPadding: {
+    padding: 10
+  }
 })

@@ -7,6 +7,7 @@
   "main": "main.js",
   "dependencies": {
     "@exponent/vector-icons": "~2.0.3",
+    "adb": "^0.2.0",
     "axios": "^0.15.3",
     "exponent": "~12.0.0",
     "react": "~15.3.2",
