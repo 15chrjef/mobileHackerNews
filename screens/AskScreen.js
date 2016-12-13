@@ -29,7 +29,6 @@ export default class AskScreen extends React.Component {
 			for(var i = 0; i < stories.length; i++) {
 				await fetch(`https://hacker-news.firebaseio.com/v0/item/${stories[i]}.json?print=pretty`)
 				.then(async function(story) {
-					console.log(story)
 					await askStories.push(JSON.parse(story._bodyInit))
 				})
 			}

@@ -7,7 +7,8 @@ import {
   Dimensions,
   ListView,
   TouchableOpacity,
-  Linking
+  Linking,
+  WebView
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import Title from '../components/Title'
@@ -15,7 +16,8 @@ export default class HomeScreen extends React.Component {
   constructor(){
     super()
     this.state = {
-      stories: '' 
+      stories: '' ,
+      webUrl: ''
     }
   }
   goToLink(link){
@@ -45,7 +47,8 @@ export default class HomeScreen extends React.Component {
       });
   }
   render() {
-    if(this.state.stories !== ''){  
+    let self = this;
+    if(this.state.stories !== '' && this.state.webUrl === ''){  
       return (
         <View style={styles.container}>
           <Title/>
@@ -63,7 +66,7 @@ export default class HomeScreen extends React.Component {
                         {Number(rowId) + 1}. Title:{` `}
                       </Text>
                       <TouchableOpacity 
-                        onPress={function(){Linking.openURL(rowData.url).catch(err => console.error('An error occurred', err))}}
+                        onPress={function(){ self.setState({webUrl: rowData.url}) }}
                         >
                         <Text style={styles.link}>
                           {rowData.title}
@@ -78,6 +81,27 @@ export default class HomeScreen extends React.Component {
           </View>
         </View>
       );
+    } else if ( this.state.webUrl !== '') {
+      return (
+        <View style={styles.container}>
+         <WebView
+            ref={'webview'}
+            automaticallyAdjustContentInsets={false}
+            style={styles.webView}
+            source={{uri: this.state.webUrl}}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            decelerationRate="normal"
+            startInLoadingState={true}
+            scalesPageToFit={this.state.scalesPageToFit}
+            />
+          <TouchableOpacity style={styles.goBack} onPress={function(){ self.setState({
+            webUrl: ''
+          })}}>
+            <Text>Go Back To App</Text>
+          </TouchableOpacity>
+        </View>
+      )
     } else {
       return (
            <View style={styles.container}>
@@ -123,5 +147,16 @@ const styles = StyleSheet.create({
   link: {
     color: 'blue',
     textDecorationLine : 'underline'
+  },  goBack: {
+    backgroundColor: 'rgba(255, 0, 0, .9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: width,
+    flex: .07
+  },
+  webView: {
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    height: height,
+    width: width
   }
 });

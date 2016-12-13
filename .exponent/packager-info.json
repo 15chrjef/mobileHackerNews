@@ -1,8 +1,8 @@
 {
-  "packagerPort": 19001,
-  "packagerPid": 719,
-  "exponentServerPort": 19000,
+  "packagerPort": 19015,
+  "packagerPid": 15168,
+  "exponentServerPort": 19012,
   "exponentServerNgrokUrl": "https://ff-dyy.15chrjef.hackernewsnative.exp.direct",
   "packagerNgrokUrl": "https://packager.ff-dyy.15chrjef.hackernewsnative.exp.direct",
-  "ngrokPid": 744
+  "ngrokPid": 15191
 }
