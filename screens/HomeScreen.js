@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     color: 'blue',
     textDecorationLine : 'underline'
   },  goBack: {
-    backgroundColor: 'rgba(255, 0, 0, .9)',
+    backgroundColor: 'rgba(200, 200, 200, .9)',
     justifyContent: 'center',
     alignItems: 'center',
     width: width,
