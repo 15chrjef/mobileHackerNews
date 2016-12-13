@@ -56,7 +56,7 @@ export default class AskScreen extends React.Component {
 										<Text>{Number(rowId) + 1}).</Text> 
 										<Text style={styles.title}>{rowData.title.slice(7)}</Text>
 									</View>
-									<Text>Story: {rowData.text}</Text>
+									<Text>Additional Question: {rowData.text}</Text>
 								</View>
 							)}
 						/>
