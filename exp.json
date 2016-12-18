@@ -18,11 +18,7 @@
   "packagerOpts": {
     "assetExts": ["ttf", "mp4"]
   },
-  "ios": {
-    "supportsTablet": true,
-     "bundleIdentifier": "org.rnplay.exp"
-  },
   "android": {
-    "package": "org.rnplay.exp"
+    "package": "org.jemerichii.rnplay.exp"
   }
 }

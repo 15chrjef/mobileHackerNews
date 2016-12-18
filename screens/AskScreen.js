@@ -6,7 +6,8 @@ import {
   View,
   Dimensions,
   ListView,
-  TouchableOpacity
+  TouchableOpacity,
+	RefreshControl
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import Title from '../components/Title.js'
@@ -15,10 +16,16 @@ export default class AskScreen extends React.Component {
 	constructor(){
 		super()
 		this.state = {
-			stories:''
+			stories:'',
+			refreshing: false
 		}
+		this._onRefresh = this._onRefresh.bind(this);
+		this.fetchData = this.fetchData.bind(this);
 	}
-	componentWillMount(){
+	componentWillMount(){ 
+    this.fetchData()
+  }
+	fetchData(){
 		var self = this;
 		fetch('https://hacker-news.firebaseio.com/v0/askstories.json?print=pretty')
 		.then(function(response) {
@@ -36,12 +43,21 @@ export default class AskScreen extends React.Component {
 			self.setState({
 				stories: ds.cloneWithRows(askStories)
 			})
+			if(self.state.refreshing === true) {
+				self.setState({refreshing: false});
+			}
 		})
 		.catch(function(err){
 			console.log('errrorrr', err)
 		})
 	}
+	_onRefresh() {
+    var self = this;
+    this.setState({refreshing: true});
+    this.fetchData()
+  }
 	render(){
+		let self = this;
 		if(this.state.stories !== '') {
 			return(
 				<View style={styles.container}>
@@ -52,6 +68,12 @@ export default class AskScreen extends React.Component {
 							contentInset={{bottom:30}}
 							dataSource={this.state.stories}
 							renderFooter={() => <View style={styles.footer}></View>}
+							refreshControl={
+								<RefreshControl
+									refreshing={self.state.refreshing}
+									onRefresh={self._onRefresh}
+								/>
+							}
 							renderRow={(rowData, sectionId, rowId) => (
 								<View style={styles.newsRow}>
 									<View style={styles.linkRow}>

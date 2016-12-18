@@ -7,12 +7,11 @@ import {
   Dimensions,
   ListView,
   TouchableOpacity,
-  WebView
+  WebView,
+  RefreshControl
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import Title from '../components/Title.js'
-
-
 
 export default class JobScreen extends React.Component {
    constructor(){
@@ -21,30 +20,44 @@ export default class JobScreen extends React.Component {
       stories: '',
       webUrl: '',
       scalesPageToFit: true,
+      refreshing: false
     }
+    this.fetchData = this.fetchData.bind(this)
+    this._onRefresh = this._onRefresh.bind(this)
   }
-   componentWillMount(){ 
-     let self = this;
-     fetch('https://hacker-news.firebaseio.com/v0/jobstories.json?print=pretty')
-      .then((response) => {
-        return ((JSON.parse(response._bodyInit)).slice(0,10))
-      })
-      .then( async function(stories) {
-        let myStories = [];
-        for(var i = 0; i < stories.length; i++) {
-          await fetch(`https://hacker-news.firebaseio.com/v0/item/${stories[i]}.json?print=pretty`)
-          .then(async (response) => {
-            await myStories.push((JSON.parse(response._bodyInit)))
-          })
-        }
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        self.setState({
-          stories: ds.cloneWithRows(myStories)
-        })  
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  componentWillMount(){ 
+     this.fetchData()
+  }
+  _onRefresh() {
+    var self = this;
+    this.setState({refreshing: true});
+    this.fetchData()
+  }
+  fetchData(){ 
+    let self = this;
+    fetch('https://hacker-news.firebaseio.com/v0/jobstories.json?print=pretty')
+    .then((response) => {
+      return ((JSON.parse(response._bodyInit)).slice(0,10))
+    })
+    .then( async function(stories) {
+      let myStories = [];
+      for(var i = 0; i < stories.length; i++) {
+        await fetch(`https://hacker-news.firebaseio.com/v0/item/${stories[i]}.json?print=pretty`)
+        .then(async (response) => {
+          await myStories.push((JSON.parse(response._bodyInit)))
+        })
+      }
+      const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+      self.setState({
+        stories: ds.cloneWithRows(myStories)
+      })  
+      if(self.state.refreshing === true) {
+        self.setState({refreshing: false});
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
   }
   render() {
     let self = this;
@@ -61,6 +74,12 @@ export default class JobScreen extends React.Component {
                 contentInset={{bottom:30}}
                 dataSource={this.state.stories}
                 renderFooter={() => <View style={styles.footer}></View>}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={self.state.refreshing}
+                    onRefresh={self._onRefresh}
+                  />
+                }
                 renderRow={(rowData, sectionId, rowId) => (
                   <View style={styles.newsRow}>
                     <View style={styles.linkRow}>

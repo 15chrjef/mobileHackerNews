@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Linking,
   WebView,
-  StatusBar
+  StatusBar,
+  RefreshControl,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import Title from '../components/Title'
@@ -19,13 +20,16 @@ export default class HomeScreen extends React.Component {
     this.state = {
       stories: '' ,
       webUrl: '',
+      refreshing: false
     }
+    this.fetchData = this.fetchData.bind(this)
+    this._onRefresh = this._onRefresh.bind(this);
   }
-  goToLink(link){
-
+  componentWillMount(){ 
+    this.fetchData()
   }
-   componentWillMount(){ 
-     let self = this;
+  fetchData(){
+    let self = this;
      fetch('https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty')
       .then((response) => {
         return ((JSON.parse(response._bodyInit)).slice(0,10))
@@ -42,10 +46,18 @@ export default class HomeScreen extends React.Component {
         self.setState({
           stories: ds.cloneWithRows(myStories)
         })  
+        if(self.state.refreshing === true) {
+          self.setState({refreshing: false});
+        }
       })
       .catch((error) => {
         console.error(error);
       });
+  }
+  _onRefresh() {
+    var self = this;
+    this.setState({refreshing: true});
+    this.fetchData()
   }
   render() {
     let self = this;
@@ -66,6 +78,12 @@ export default class HomeScreen extends React.Component {
                 contentInset={{bottom:30}}
                 dataSource={this.state.stories}
                 renderFooter={() => <View style={styles.footer}></View>}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={self.state.refreshing}
+                    onRefresh={self._onRefresh}
+                  />
+                }
                 renderRow={(rowData, sectionId, rowId) => (
                   <View style={styles.newsRow}>
                     <View style={styles.linkRow}>
